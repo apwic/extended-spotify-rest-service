@@ -28,9 +28,6 @@ db.user = require("./user.model.js")(sequelize, Sequelize);
 db.song = require("./song.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.song, {
-  foreignKey: "user_id",
-})
-db.song.belongsTo(db.user, {
   foreignKey: "penyanyi_id"
 });
 

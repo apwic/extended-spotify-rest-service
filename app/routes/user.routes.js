@@ -18,6 +18,6 @@ module.exports = function(app) {
   );
 
   app.get("/test/admin",
-  [authJwt.verifyToken, authJwt.isAdmin],
+    [authJwt.verifyToken, authJwt.isAdmin],
   controller.adminAccess);
 };

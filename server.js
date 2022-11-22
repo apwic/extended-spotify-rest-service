@@ -34,6 +34,7 @@ app.use(
 // set routes
 require("./app/routes/auth.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
+require("./app/routes/song.routes.js")(app);
 
 // set port, use 8080 if not exist
 const PORT = process.env.PORT || 8080;
