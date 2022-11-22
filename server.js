@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const { json } = require("sequelize");
-const cookieSession = require("cookie-session")
+const cookieSession = require("cookie-session");
+const dotenv = require("dotenv");
 
 const app = express();
 
@@ -9,9 +10,10 @@ const db = require("./app/models");
 const User = db.user;
 
 db.sequelize.sync();
+dotenv.config();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:" + process.env.CORS_ORIGIN_PORT
 };
 
 app.use(cors(corsOptions));
@@ -26,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cookieSession({
     name: "sepotipayi-premium",
-    secret: "sepotipayi-premium-secret-key",
+    secret: process.env.SECRET_KEY,
     httpOnly: true
   })
 )
