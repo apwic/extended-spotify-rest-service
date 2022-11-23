@@ -55,7 +55,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign(
       {user_id : user.user_id}, 
       config.secret,
-      {expiresIn: 1800}
+      {expiresIn: parseInt(config.expire)}
     );
 
     req.session.token = token;
