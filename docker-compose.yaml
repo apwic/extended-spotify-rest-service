@@ -13,6 +13,7 @@ services:
       - db:/var/lib/mysql
   app:
     container_name: sepotipayi-rest-service
+    restart: unless-stopped
     depends_on:
       - mysqldb
     build: 
