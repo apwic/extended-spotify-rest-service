@@ -3,13 +3,17 @@ const cors = require("cors");
 const { json } = require("sequelize");
 const cookieSession = require("cookie-session");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
+const path = require("path");
+
+global.__basedir = __dirname;
 dotenv.config();
 
 const app = express();
 
 const db = require("./app/models");
-const User = db.user;
 
+// sync database
 db.sequelize.sync();
 
 var corsOptions = {
@@ -19,10 +23,10 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // content-type application/json
-app.use(express.json());
+app.use(bodyParser.json());
 
 // content-type application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // set cookies
 app.use(
@@ -37,6 +41,7 @@ app.use(
 require("./app/routes/auth.routes.js")(app);
 require("./app/routes/user.routes.js")(app);
 require("./app/routes/song.routes.js")(app);
+app.use(express.static(path.join(__basedir, '/public')));
 
 // set port, use 8080 if not exist
 const PORT = process.env.PORT || 8080;
@@ -48,5 +53,5 @@ app.get("/", (req, res) => {
 
 // listen for request
 app.listen(PORT, () => {
-  console.log("Server running at at localhost:" + PORT);
+  console.log("Server running at localhost:" + PORT);
 });

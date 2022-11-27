@@ -1,6 +1,8 @@
-const { user } = require("../models");
+const uploadFile = require("../middleware/file");
 const db = require("../models");
 const Song = db.song;
+const fs = require("fs");
+const path = require("path");
 
 exports.getSongs = async(req, res) => {
   try {
@@ -84,16 +86,28 @@ exports.getSongsByPenyanyiID = async(req, res) => {
 
 exports.createSong = async(req, res) => {
   try {
-    const song = await Song.create({
+    await uploadFile(req, res);
+
+    if (req.file == undefined) {
+      return (res.status(400).send({message: "File not included in request!"}));
+    }
+
+    Song.create({
       judul: req.body.judul,
-      audio_path: req.body.audio_path,
+      audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
       penyanyi_id: req.user_id
-    })
+    });
 
     return res.status(200).send({
       message: "Song created succesfully"
     });
   } catch (err) {
+    if (err.code == "LIMIT_FILE_SIZE") {
+      return res.status(500).send({
+        message: "File size cannot be larger than 64MB!",
+      });
+    }
+
     return res.status(500).send({
       message: err.message
     });
@@ -102,15 +116,41 @@ exports.createSong = async(req, res) => {
 
 exports.deleteSong = async(req, res)  => {
   try {
-    const song = await Song.destroy({
-      where : {
-        song_id : req.query.id
+    let song = await Song.findOne({
+      attributes: ['audio_path'],
+      where: {
+        song_id: req.query.id,
       }
     });
 
-    return res.status(200).send({
-      message: "Song deleted succesfully"
+    if (!song) {
+      return res.status(404).send({
+        message: "Songs not found"
+      });
+    }
+
+    const audio_path = song.audio_path;
+    const fileName = path.parse(audio_path).name + path.parse(audio_path).ext;
+    const dirPath = __basedir + "/public/uploads/" + fileName;
+
+    fs.unlink(dirPath, (err) => {
+      if (err) {
+        return res.status(500).send({
+          message: "Could not delete file. " + err,
+        });
+      }
+
+      song = Song.destroy({
+        where : {
+          song_id : req.query.id
+        }
+      });
+  
+      return res.status(200).send({
+        message: "Song deleted succesfully"
+      });
     });
+
   } catch (err) {
     return res.status(500).send({
       message: err.message
@@ -139,8 +179,3 @@ exports.updateSong = async(req, res) => {
     })
   }
 };
-
-
-
-
-
