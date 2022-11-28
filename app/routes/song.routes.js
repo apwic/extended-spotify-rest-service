@@ -14,7 +14,7 @@ module.exports = function(app) {
 
   app.get("/songs/user",
     [authJwt.verifyToken],
-    controller.getSongsByPenyanyiID
+    controller.getSongsByUserToken
   );
 
   app.post("/songs",

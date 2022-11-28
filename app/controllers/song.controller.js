@@ -1,31 +1,16 @@
 const uploadFile = require("../middleware/file");
 const db = require("../models");
 const Song = db.song;
+const User = db.user;
 const fs = require("fs");
 const path = require("path");
 
 exports.getSongs = async(req, res) => {
   try {
     const idParams = req.query.id;
+    const penyanyiIdParams = req.query.penyanyi_id;
 
-    if (!idParams) {
-      const songs = await Song.findAll();
-      let songList = [];
-  
-      if (!songs) {
-        return res.status(404).send({
-          message: "Songs not found"
-        });
-      }
-  
-      for (let i=0; i < songs.length; i++) {
-        songList.push(songs[i]);
-      }
-      
-      return res.status(200).send({
-        songs: songList
-      });
-    } else {
+    if (idParams) {
       const song = await Song.findOne({
         where: {
           song_id : req.query.id
@@ -44,6 +29,52 @@ exports.getSongs = async(req, res) => {
         penyanyi_id : song.penyanyi_id,
         audio_path : song.audio_path
       });
+    } else if (penyanyiIdParams) {
+      const songs = await Song.findAll({
+        where: {
+          penyanyi_id: penyanyiIdParams
+        }
+      })
+
+      const user = await User.findOne({
+        where : {
+          user_id: penyanyiIdParams,
+        }
+      })
+  
+      if (!songs) {
+        return res.status(404).send({
+          message: "Songs not found"
+        });
+      }
+  
+      let songList = [];
+  
+      for (let i=0; i < songs.length; i++) {
+        songList.push(songs[i]);
+      }
+      
+      return res.status(200).send({
+        songs: songList,
+        penyanyi: user.name,
+      });
+    } else {
+      const songs = await Song.findAll();
+      let songList = [];
+  
+      if (!songs) {
+        return res.status(404).send({
+          message: "Songs not found"
+        });
+      }
+  
+      for (let i=0; i < songs.length; i++) {
+        songList.push(songs[i]);
+      }
+      
+      return res.status(200).send({
+        songs: songList
+      });
     }
 
   } catch (err) {
@@ -53,7 +84,7 @@ exports.getSongs = async(req, res) => {
   }
 };
 
-exports.getSongsByPenyanyiID = async(req, res) => {
+exports.getSongsByUserToken = async(req, res) => {
   try {
     const songs = await Song.findAll({
       where: {
@@ -82,7 +113,6 @@ exports.getSongsByPenyanyiID = async(req, res) => {
     });
   }
 }
-
 
 exports.createSong = async(req, res) => {
   try {
