@@ -33,11 +33,11 @@ isAdmin = async (req, res, next) => {
       }
     });
 
-    if (admin){
+    if (admin.isAdmin){
       next();
       return;
     }
-
+``
     res.status(403).send({
       message : "Not admin!"
     });

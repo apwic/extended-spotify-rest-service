@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const cors = require("cors");
 const { json } = require("sequelize");
 const cookieSession = require("cookie-session");
@@ -17,9 +18,11 @@ const db = require("./app/models");
 db.sequelize.sync();
 
 var corsOptions = {
-  origin: ["http://localhost"]
+  credentials: true,
+  origin: ["http://localhost", "http://localhost:3000"]
 };
 
+app.use(morgan('combined'));
 app.use(cors(corsOptions));
 
 // content-type application/json

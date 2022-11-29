@@ -44,7 +44,6 @@ exports.signIn = async (req, res) => {
       user.password
     );
 
-    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       return res.status(401).send({
@@ -64,7 +63,6 @@ exports.signIn = async (req, res) => {
       user_id: user.user_id,
       username: user.username,
       email: user.email,
-      password: user.password,
       name: user.name,
       isAdmin: user.isAdmin,
     });
