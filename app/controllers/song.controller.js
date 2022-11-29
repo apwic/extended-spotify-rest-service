@@ -190,8 +190,13 @@ exports.deleteSong = async(req, res)  => {
 
 exports.updateSong = async(req, res) => {
   try {
-    const song = await Song.update(
-      {
+    await uploadFile(req, res);
+    
+    if (req.file == undefined) {
+      return (res.status(400).send({message: "File not included in request!"}));
+    }
+    
+    Song.update({
         judul: req.body.judul,
         audio_path: req.body.audio_path
       },
