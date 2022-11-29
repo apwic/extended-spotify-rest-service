@@ -41,9 +41,10 @@ app.use(
 )
 
 // set routes
-require("./app/routes/auth.routes.js")(app);
-require("./app/routes/user.routes.js")(app);
-require("./app/routes/song.routes.js")(app);
+require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
+require("./app/routes/song.routes")(app);
+require("./app/routes/subscription.routes")(app);
 app.use(express.static(path.join(__basedir, '/public')));
 
 // set port, use 8080 if not exist
