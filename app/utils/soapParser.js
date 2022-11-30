@@ -5,19 +5,41 @@ const basicParser = (xml) => {
 const subsListParser = (subs) => {
   let parsed = basicParser(subs)["ns2:getListSubcriptionResponse"][0].return;
 
-  for (let i = 0; i < parsed.length; i++) {
-    parsed[i].creatorId = (parsed[i].creatorId)[0];
-    parsed[i].creatorName = (parsed[i].creatorName)[0];
-    parsed[i].status = (parsed[i].status)[0];
-    parsed[i].subscriberId = (parsed[i].subscriberId)[0];
-    parsed[i].subscriberName = (parsed[i].subscriberName)[0];
+  if(parsed !== undefined){
+    for (let i = 0; i < parsed.length; i++) {
+      parsed[i].creatorId = (parsed[i].creatorId)[0];
+      parsed[i].creatorName = (parsed[i].creatorName)[0];
+      parsed[i].status = (parsed[i].status)[0];
+      parsed[i].subscriberId = (parsed[i].subscriberId)[0];
+      parsed[i].subscriberName = (parsed[i].subscriberName)[0];
+    }
+    return parsed;
+  } else {
+    return [];
   }
 
-  return parsed;
+}
+
+const subsBySubsIdParser = (subs) => {
+  let parsed = basicParser(subs)["ns2:getSubscriptionBySubsIdResponse"][0].return;
+
+  if (parsed !== undefined) {
+    for (let i = 0; i < parsed.length; i++) {
+      parsed[i].creatorId = (parsed[i].creatorId)[0];
+      parsed[i].creatorName = (parsed[i].creatorName)[0];
+      parsed[i].status = (parsed[i].status)[0];
+      parsed[i].subscriberId = (parsed[i].subscriberId)[0];
+      parsed[i].subscriberName = (parsed[i].subscriberName)[0];
+    }
+    return parsed;
+  } else {
+    return [];
+  }
+
 }
 
 const updateSubsParser = (msg) => {
   return basicParser(msg)['ns2:updateStatusResponse'][0];
 }
 
-module.exports = { subsListParser, updateSubsParser };
+module.exports = { subsListParser, subsBySubsIdParser, updateSubsParser };

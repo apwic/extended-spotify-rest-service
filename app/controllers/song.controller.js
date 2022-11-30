@@ -1,9 +1,13 @@
 const uploadFile = require("../middleware/file");
 const db = require("../models");
-const Song = db.song;
-const User = db.user;
+const soap = require("../soap.common")
+const { parseStringPromise } = require("xml2js");
+const { subsBySubsIdParser } = require("../utils/soapParser");
 const fs = require("fs");
 const path = require("path");
+
+const Song = db.song;
+const User = db.user;
 
 exports.getSongs = async(req, res) => {
   try {
@@ -107,6 +111,64 @@ exports.getSongsByUserToken = async(req, res) => {
     return res.status(200).send({
       songs: songList
     });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message
+    });
+  }
+}
+
+exports.getSongsBySubs = async(req, res) => {
+  try {
+    const envelope = `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                          <Body>
+                              <getSubscriptionBySubsId xmlns="http://controllers/">
+                                  <arg0 xmlns="">${req.query.subscriberId}</arg0>
+                              </getSubscriptionBySubsId>
+                          </Body>
+                      </Envelope>`;
+
+    const subList = await soap.post("/subscription", envelope)
+                              .then((response) => {
+                                return parseStringPromise(response.data);
+                              })
+                              .then((result) => {
+                                const subs = subsBySubsIdParser(result);
+                                return subs;
+                              });
+
+    if (subList) {
+      return res.status(404).send({
+        message: "User not subscribed to any singer"
+      })
+    }
+    
+    let songList = [];
+
+    for (let i=0; i < subList.length; i++){
+      const songs = await Song.findAll({
+        where: {
+          penyanyi_id: subList[i].creatorId
+        }
+      });
+
+      if (songs){
+        for (let j=0; j < songs.length; j++){
+          songList.push(songs[j]);
+        }
+      }
+    }
+
+    if (songList.length === 0) {
+      return res.status(404).send({
+        message: "Songs not found"
+      })
+    }
+
+    return res.status(200).send({
+      songs: songList
+    });
+
   } catch (err) {
     res.status(500).send({
       message: err.message

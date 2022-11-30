@@ -16,7 +16,7 @@ module.exports = function(app) {
   );
 
   app.patch("/subscription",
-    [authJwt.verifyToken, authJwt.isUser],
+    [authJwt.verifyToken, authJwt.isAdmin],
     controller.updateSubscription
   );
 };

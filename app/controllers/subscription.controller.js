@@ -14,7 +14,6 @@ exports.getSubscriptionList = async(req, res) => {
                         return parseStringPromise(response.data);
                       })
                       .then((result) => {
-                        // TODO: PARSER FOR XML
                         const subs = subsListParser(result);
                         return res.status(200).send({
                           subscription: subs
