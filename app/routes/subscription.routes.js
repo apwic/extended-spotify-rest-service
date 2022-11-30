@@ -10,4 +10,5 @@ module.exports = function(app) {
   });
 
   app.get("/subscription", controller.getSubscriptionList);
+  app.patch("/subscription", controller.updateSubscription)
 };
