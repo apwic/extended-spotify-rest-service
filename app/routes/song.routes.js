@@ -13,22 +13,22 @@ module.exports = function(app) {
   app.get("/songs", controller.getSongs);
 
   app.get("/songs/user",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isUser],
     controller.getSongsByUserToken
   );
 
   app.post("/songs",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isUser],
     controller.createSong
   );
 
   app.delete("/songs",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isUser],
     controller.deleteSong
   );
 
   app.patch("/songs",
-    [authJwt.verifyToken],
+    [authJwt.verifyToken, authJwt.isUser],
     controller.updateSong
   );
 };

@@ -32,8 +32,8 @@ exports.updateSubscription = async(req, res) => {
     const envelope = `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                           <Body>
                               <updateStatus xmlns="http://controllers/">
-                                  <arg0 xmlns="">${req.body.creator_id}</arg0>
-                                  <arg1 xmlns="">${req.body.subscriber_id}</arg1>
+                                  <arg0 xmlns="">${req.body.creatorId}</arg0>
+                                  <arg1 xmlns="">${req.body.subscriberId}</arg1>
                                   <arg2 xmlns="">${req.body.status}</arg2>
                               </updateStatus>
                           </Body>

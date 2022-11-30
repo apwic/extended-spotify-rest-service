@@ -37,7 +37,32 @@ isAdmin = async (req, res, next) => {
       next();
       return;
     }
-``
+
+    res.status(403).send({
+      message : "Not admin!"
+    });
+    return;
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message
+    });
+  }
+}
+
+isUser = async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      attributes: ['isAdmin'],
+      where: {
+        user_id: req.user_id
+      }
+    });
+
+    if (!user.isAdmin){
+      next();
+      return;
+    }
+
     res.status(403).send({
       message : "Not admin!"
     });
@@ -51,7 +76,8 @@ isAdmin = async (req, res, next) => {
 
 const authJwt = {
   verifyToken: verifyToken,
-  isAdmin: isAdmin
+  isAdmin: isAdmin,
+  isUser: isUser
 };
 
 module.exports = authJwt;

@@ -1,4 +1,5 @@
 const controller = require("../controllers/subscription.controller");
+const { authJwt } = require("../middleware");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -9,6 +10,13 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/subscription", controller.getSubscriptionList);
-  app.patch("/subscription", controller.updateSubscription)
+  app.get("/subscription",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.getSubscriptionList
+  );
+
+  app.patch("/subscription",
+    [authJwt.verifyToken, authJwt.isUser],
+    controller.updateSubscription
+  );
 };
