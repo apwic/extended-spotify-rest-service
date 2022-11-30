@@ -31,6 +31,7 @@ services:
       - JWT_SECRET_KEY=$JWT_SECRET_KEY
       - JWT_EXPIRE=$JWT_EXPIRE
       - PORT=$NODE_DOCKER_PORT
+      - API_KEY=$API_KEY
     stdin_open: true
     tty: true
 

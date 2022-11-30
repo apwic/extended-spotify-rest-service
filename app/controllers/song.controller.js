@@ -137,7 +137,7 @@ exports.getSongsBySubs = async(req, res) => {
                                 return subs;
                               });
 
-    if (subList) {
+    if (subList.length === 0) {
       return res.status(404).send({
         message: "User not subscribed to any singer"
       })
@@ -154,7 +154,16 @@ exports.getSongsBySubs = async(req, res) => {
 
       if (songs){
         for (let j=0; j < songs.length; j++){
-          songList.push(songs[j]);
+          songList.push({
+            "song_id": songs[j].song_id,
+            "judul": songs[j].judul,
+            "audio_path": songs[j].audio_path,
+            "penyanyi_id": songs[j].penyanyi_id,
+            "createdAt": songs[j].createdAt,
+            "updatedAt": songs[j].updatedAt,
+            "penyanyi" : subList[i].creatorName
+          });
+          console.log(songList);
         }
       }
     }
@@ -166,7 +175,7 @@ exports.getSongsBySubs = async(req, res) => {
     }
 
     return res.status(200).send({
-      songs: songList
+      songs: songList,
     });
 
   } catch (err) {
@@ -253,23 +262,72 @@ exports.deleteSong = async(req, res)  => {
 exports.updateSong = async(req, res) => {
   try {
     await uploadFile(req, res);
+
+    const song = await Song.findOne({
+      where: {
+        song_id: req.body.id,
+      }
+    });
+
+    if (!song) {
+      return res.status(404).send({
+        message: "Songs not found"
+      });
+    }
+
+    const old_audio_path = song.audio_path;
+    const fileName = path.parse(old_audio_path).name + path.parse(old_audio_path).ext;
+    const dirPath = __basedir + "/public/uploads/" + fileName;
     
     if (req.file == undefined) {
-      return (res.status(400).send({message: "File not included in request!"}));
-    }
-    
-    Song.update({
-        judul: req.body.judul,
-        audio_path: req.body.audio_path
-      },
-      { where: {
-        song_id : req.query.id
-      }}
-    );
+      if (req.body.judul == undefined) {
+        return (res.status(400).send({message: "File not included in request!"}));
+      } else {
+        Song.update({
+            judul: req.body.judul,
+          },
+          { where: {
+            song_id : req.body.id
+          }}
+        );
 
-    return res.status(200).send({
-      message: "Song updated succesfully"
-    });
+        return res.status(200).send({
+          message: "Song updated succesfully"
+        });
+      }
+    } else {
+      if (req.body.judul == undefined) {
+        Song.update({
+            audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
+          },
+          { where: {
+            song_id : req.body.id
+          }}
+        );
+      } else {
+        Song.update({
+            judul: req.body.judul,
+            audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
+          },
+          { where: {
+            song_id : req.body.id
+          }}
+        );
+      }
+      
+      fs.unlink(dirPath, (err) => {
+        if (err) {
+          return res.status(500).send({
+            message: "Could not delete file. " + err,
+          });
+        }
+    
+        return res.status(200).send({
+          message: "Song updated succesfully"
+        });
+      });
+    }
+
   } catch (err) {
     return res.status(500).send({
       message: err.message

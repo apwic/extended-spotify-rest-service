@@ -64,7 +64,7 @@ isUser = async (req, res, next) => {
     }
 
     res.status(403).send({
-      message : "Not admin!"
+      message : "Not user!"
     });
     return;
   } catch (err) {
