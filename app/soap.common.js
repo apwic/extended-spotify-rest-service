@@ -1,6 +1,9 @@
 const axios = require("axios");
 
 module.exports = axios.create({
-  baseURL: `http://localhost:${process.env.SOAP_PORT}`,
-  headers: { "content-type" : "text/xml"},
+  baseURL: `http://127.0.0.1:${process.env.SOAP_PORT}`,
+  headers: { 
+    "authorization" : process.env.API_KEY,
+    "content-type" : "text/xml"
+  },
 });
