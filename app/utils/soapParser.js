@@ -35,11 +35,14 @@ const subsBySubsIdParser = (subs) => {
   } else {
     return [];
   }
+}
 
+const isSubbedParser = (subs) => {
+  return basicParser(subs)["ns2:checkStatusResponse"][0].return[0];
 }
 
 const updateSubsParser = (msg) => {
   return basicParser(msg)['ns2:updateStatusResponse'][0];
 }
 
-module.exports = { subsListParser, subsBySubsIdParser, updateSubsParser };
+module.exports = { subsListParser, subsBySubsIdParser, updateSubsParser, isSubbedParser };

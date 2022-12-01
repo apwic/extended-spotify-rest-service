@@ -2,7 +2,7 @@ const uploadFile = require("../middleware/file");
 const db = require("../models");
 const soap = require("../soap.common")
 const { parseStringPromise } = require("xml2js");
-const { subsBySubsIdParser } = require("../utils/soapParser");
+const { subsBySubsIdParser, isSubbedParser } = require("../utils/soapParser");
 const fs = require("fs");
 const path = require("path");
 
@@ -171,6 +171,70 @@ exports.getSongsBySubs = async(req, res) => {
     if (songList.length === 0) {
       return res.status(404).send({
         message: "Songs not found"
+      })
+    }
+
+    return res.status(200).send({
+      songs: songList,
+    });
+
+  } catch (err) {
+    res.status(500).send({
+      message: err.message
+    });
+  }
+}
+
+exports.getSongsBySinger = async(req, res) => {
+  try {
+    const envelope = `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                          <Body>
+                              <checkStatus xmlns="http://controllers/">
+                                  <arg0 xmlns="">${req.query.creatorId}</arg0>
+                                  <arg1 xmlns="">${req.query.subscriberId}</arg1>
+                              </checkStatus>
+                          </Body>
+                      </Envelope>`;
+
+    const isSubbed = await soap.post("/subscription", envelope)
+                              .then((response) => {
+                                return parseStringPromise(response.data);
+                              })
+                              .then((result) => {
+                                return (isSubbedParser(result))});
+
+    if (isSubbed === 'false') {
+      return res.status(404).send({
+        message: "User not subscribed to singer"
+      })
+    }
+    
+    let songList = [];
+
+    const songs = await Song.findAll({
+      where: {
+        penyanyi_id: req.query.creatorId
+      }
+    });
+
+    if (songs){
+      for (let j=0; j < songs.length; j++){
+        songList.push({
+          "song_id": songs[j].song_id,
+          "judul": songs[j].judul,
+          "audio_path": songs[j].audio_path,
+          "penyanyi_id": songs[j].penyanyi_id,
+          "createdAt": songs[j].createdAt,
+          "updatedAt": songs[j].updatedAt,
+          "penyanyi" : req.query.creatorId
+        });
+        console.log(songList);
+      }
+    }
+
+    if (songList.length === 0) {
+      return res.status(404).send({
+        message: "Singer currently doesn't have any songs yet"
       })
     }
 

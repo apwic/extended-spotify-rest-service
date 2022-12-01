@@ -19,7 +19,7 @@ db.sequelize.sync();
 
 var corsOptions = {
   credentials: true,
-  origin: ["http://localhost", "http://localhost:3000"]
+  origin: ["http://localhost", "http://localhost:3000", "http://localhost:8008"]
 };
 
 app.use(morgan('combined'));

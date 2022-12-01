@@ -19,6 +19,8 @@ module.exports = function(app) {
 
   app.get("/songs/subscription", controller.getSongsBySubs);
 
+  app.get("/songs/singer", controller.getSongsBySinger);
+
   app.post("/songs",
     [authJwt.verifyToken, authJwt.isUser],
     controller.createSong
