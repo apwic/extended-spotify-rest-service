@@ -6,6 +6,7 @@ const cookieSession = require("cookie-session");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const path = require("path");
+const proxy = require("express-http-proxy");
 
 global.__basedir = __dirname;
 dotenv.config();
@@ -19,7 +20,7 @@ db.sequelize.sync();
 
 var corsOptions = {
   credentials: true,
-  origin: ["http://localhost", "http://localhost:3000", "http://localhost:8008"]
+  origin: ["http://localhost", `http://localhost:${process.env.APP_PORT}`,"http://localhost:3000", `http://localhost:${process.env.PREMIUM_APP_PORT}`]
 };
 
 app.use(morgan('combined'));
@@ -46,6 +47,7 @@ require("./app/routes/user.routes")(app);
 require("./app/routes/song.routes")(app);
 require("./app/routes/subscription.routes")(app);
 app.use(express.static(path.join(__basedir, '/public')));
+// app.use('/', proxy('localhost:1920'));
 
 // set port, use 8080 if not exist
 const PORT = process.env.PORT || 8080;
@@ -56,6 +58,6 @@ app.get("/", (req, res) => {
 });
 
 // listen for request
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log("Server running at localhost:" + PORT);
 });

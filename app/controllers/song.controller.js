@@ -163,7 +163,6 @@ exports.getSongsBySubs = async(req, res) => {
             "updatedAt": songs[j].updatedAt,
             "penyanyi" : subList[i].creatorName
           });
-          console.log(songList);
         }
       }
     }

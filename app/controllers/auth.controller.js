@@ -27,6 +27,7 @@ exports.signUp = async (req, res) => {
 
 exports.signIn = async (req, res) => {
   try {
+    console.log(req.ip);
     const user = await User.findOne({
       where: {
         username: req.body.username
@@ -54,7 +55,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign(
       {user_id : user.user_id}, 
       config.secret,
-      {expiresIn: parseInt(config.expire)}
+      // {expiresIn: parseInt(config.expire)}
     );
 
     req.session.token = token;

@@ -6,6 +6,7 @@ const User = db.user;
 
 verifyToken = (req, res, next) => {
   let token = req.session.token;
+  console.log(req.session);
 
   if (!token) {
     return res.status(403).send({
@@ -16,7 +17,7 @@ verifyToken = (req, res, next) => {
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({
-        message: "Unauhtorized token!"
+        message: "Unauthorized token!"
       });
     }
     req.user_id = decoded.user_id;
