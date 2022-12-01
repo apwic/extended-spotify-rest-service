@@ -258,7 +258,7 @@ exports.createSong = async(req, res) => {
 
     Song.create({
       judul: req.body.judul,
-      audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
+      audio_path: `http://localhost:${process.env.NODE_LOCAL_PORT}/uploads/${req.file.filename}`,
       penyanyi_id: req.user_id
     });
 
@@ -361,7 +361,7 @@ exports.updateSong = async(req, res) => {
     } else {
       if (req.body.judul == undefined) {
         Song.update({
-            audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
+            audio_path: `http://localhost:${process.env.NODE_LOCAL_PORT}/uploads/${req.file.filename}`,
           },
           { where: {
             song_id : req.body.id
@@ -370,7 +370,7 @@ exports.updateSong = async(req, res) => {
       } else {
         Song.update({
             judul: req.body.judul,
-            audio_path: `http://localhost:${process.env.PORT || "8080"}/uploads/${req.file.filename}`,
+            audio_path: `http://localhost:${process.env.NODE_LOCAL_PORT}/uploads/${req.file.filename}`,
           },
           { where: {
             song_id : req.body.id

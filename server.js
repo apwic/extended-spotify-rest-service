@@ -6,7 +6,6 @@ const cookieSession = require("cookie-session");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const path = require("path");
-const proxy = require("express-http-proxy");
 
 global.__basedir = __dirname;
 dotenv.config();
