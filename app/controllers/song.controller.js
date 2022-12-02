@@ -202,7 +202,7 @@ exports.getSongsBySinger = async(req, res) => {
                               .then((result) => {
                                 return (isSubbedParser(result))});
 
-    if (isSubbed === 'false') {
+    if (isSubbed !== 'ACCEPTED') {
       return res.status(404).send({
         message: "User not subscribed to singer"
       })
