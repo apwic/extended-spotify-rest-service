@@ -23,7 +23,7 @@ REST Service dibuat sebagai Server Backend dari Aplikasi Sepotipayi Premium APP.
 
 
 ## Cara Menjalankan Server (Standalone)
-> Perlu diperhatikan bahwa terdapat repository `sepotipayi-docker` untuk mempermudah menjalankan aplikasi secara sekaligus dan **disarankan** untuk menjalankan server melewati repository tersebut.
+> Perlu diperhatikan bahwa terdapat repository https://github.com/apwic/spotify-docker-script untuk mempermudah menjalankan aplikasi secara sekaligus dan **disarankan** untuk menjalankan server melewati repository tersebut.
 
 1. Pastikan docker desktop sudah dijalankan, disarankan untuk melakukan delete terlebih dahulu pada image MySQL yang sudah dimiliki sebelumnya
 2. Jalankan perintah `docker-compose up --build`
